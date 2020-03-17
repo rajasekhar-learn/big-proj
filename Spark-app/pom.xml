@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.mdb.sample</groupId>
+    <artifactId>spark-app</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>Spark app</name>
+    <properties>
+        <spark.version>2.4.5</spark.version>
+        <hive.jdbc.version>3.1.2</hive.jdbc.version>
+        <hadoop.version>2.7.3</hadoop.version>
+    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-shade-plugin -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.2</version>
+                <configuration>
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                            <mainClass>com.mdb.sample.BatchDataAnalyser</mainClass>
+                        </transformer>
+                    </transformers>
+                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                    <shadedClassifierName>shaded</shadedClassifierName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.7.0</version>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+  <dependencies>
+      <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-core -->
+      <dependency>
+          <groupId>org.apache.spark</groupId>
+          <artifactId>spark-core_2.12</artifactId>
+          <version>${spark.version}</version>
+      </dependency>
+
+      <dependency> <!-- Spark dependency -->
+          <groupId>org.apache.spark</groupId>
+          <artifactId>spark-sql_2.12</artifactId>
+          <version>${spark.version}</version>
+      </dependency>
+      <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-hive -->
+      <dependency>
+          <groupId>org.apache.spark</groupId>
+          <artifactId>spark-hive_2.12</artifactId>
+          <version>${spark.version}</version>
+      </dependency>
+      <!-- https://mvnrepository.com/artifact/org.apache.spark/spark-hive-thriftserver -->
+      <dependency>
+          <groupId>org.apache.spark</groupId>
+          <artifactId>spark-hive-thriftserver_2.12</artifactId>
+          <version>${spark.version}</version>
+      </dependency>
+
+      <!-- https://mvnrepository.com/artifact/org.apache.hive/hive-jdbc -->
+      <dependency>
+          <groupId>org.apache.hive</groupId>
+          <artifactId>hive-jdbc</artifactId>
+          <version>${hive.jdbc.version}</version>
+      </dependency>
+
+      <!-- https://mvnrepository.com/artifact/org.apache.hive/hive-jdbc-handler -->
+      <dependency>
+          <groupId>org.apache.hive</groupId>
+          <artifactId>hive-jdbc-handler</artifactId>
+          <version>${hive.jdbc.version}</version>
+      </dependency>
+
+      <!-- https://mvnrepository.com/artifact/org.apache.hive/hive-hplsql -->
+      <dependency>
+          <groupId>org.apache.hive</groupId>
+          <artifactId>hive-hplsql</artifactId>
+          <version>${hive.jdbc.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-hdfs</artifactId>
+        <version>${hadoop.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-common</artifactId>
+        <version>${hadoop.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-mapreduce-client-core</artifactId>
+        <version>${hadoop.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-client</artifactId>
+        <version>${hadoop.version}</version>
+    </dependency>
+      <dependency>
+          <groupId>org.antlr</groupId>
+          <artifactId>antlr4-runtime</artifactId>
+          <version>4.7</version>
+      </dependency>
+  </dependencies>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <name>Central Repository</name>
+            <url>http://repo.maven.apache.org/maven2</url>
+            <layout>default</layout>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+</project>

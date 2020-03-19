@@ -1,98 +1,81 @@
 package com.mdb.sample;
 
+
+import com.mdb.sample.utils.HDFSUtil;
+import com.mdb.sample.utils.HttpUtil;
+import com.mdb.sample.utils.PropertiesUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.spark.sql.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
-import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
 
-import org.apache.spark.api.java.function.MapFunction;
-import org.apache.spark.sql.Dataset;
-import org.apache.spark.sql.Encoders;
-import org.apache.spark.sql.Row;
-import org.apache.spark.sql.SparkSession;
+import static com.mdb.sample.constants.ModuleConstants.*;
 
-
+/**
+ * This class is driver . which creates RDD and generate logical and physical planes and collect results from executors.
+ */
 public class BatchDataAnalyser {
 
-    // $example on:spark_hive$
-    public static class Record implements Serializable {
-        private int key;
-        private String value;
-
-        public int getKey() {
-            return key;
-        }
-
-        public void setKey(int key) {
-            this.key = key;
-        }
-
-        public String getValue() {
-            return value;
-        }
-
-        public void setValue(String value) {
-            this.value = value;
-        }
-    }
-    // $example off:spark_hive$
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(BatchDataAnalyser.class);
+    /**
+     * Boot strapping point. expects list of argument, that program can expect to run.
+     *
+     * @param args expects 1 URL argument(arg[0]), from where data can be fetched.
+     */
     public static void main(String[] args) {
-        // $example on:spark_hive$
-        // warehouseLocation points to the default location for managed databases and tables
-        String warehouseLocation = new File("spark-warehouse").getAbsolutePath();
-        SparkSession spark = SparkSession
-                .builder()
-                .master("local[*]")
-                .appName("Spark app")
-                .config("spark.sql.warehouse.dir", warehouseLocation)
-                .enableHiveSupport()
-                .getOrCreate();
+        try {
+            //hive warehouse location
+            String warehouseLocation = PropertiesUtils.getPropertyValue(HIVE_WAREHOUSE_LOCATION);
 
-        spark.sql("CREATE TABLE IF NOT EXISTS src (key INT, value STRING) USING hive");
-        spark.sql("LOAD DATA LOCAL INPATH 'src/main/resources/kv1.txt' INTO TABLE src");
+            SparkSession spark = SparkSession
+                    .builder()
+                    .master("local[*]")
+                    .appName("Spark app")
+                    .config("spark.sql.warehouse.dir", warehouseLocation)
+                    .enableHiveSupport()
+                    .getOrCreate();
 
-        // Queries are expressed in HiveQL
-        spark.sql("SELECT * FROM src").show();
-        // +---+-------+
-        // |key|  value|
-        // +---+-------+
-        // |238|val_238|
-        // | 86| val_86|
-        // |311|val_311|
-        // ...
-
-        // Aggregation queries are also supported.
-        spark.sql("SELECT COUNT(*) FROM src").show();
-        // +--------+
-        // |count(1)|
-        // +--------+
-        // |    500 |
-        // +--------+
-
-        // The results of SQL queries are themselves DataFrames and support all normal functions.
-        Dataset<Row> sqlDF = spark.sql("SELECT key, value FROM src WHERE key < 10 ORDER BY key");
-
-        // The items in DataFrames are of type Row, which lets you to access each column by ordinal.
-        Dataset<String> stringsDS = sqlDF.map(
-                (MapFunction<Row, String>) row -> "Key: " + row.get(0) + ", Value: " + row.get(1),
-                Encoders.STRING());
-        stringsDS.show();
-
-        // You can also use DataFrames to create temporary views within a SparkSession.
-        List<Record> records = new ArrayList<>();
-        for (int key = 1; key < 100; key++) {
-            Record record = new Record();
-            record.setKey(key);
-            record.setValue("val_" + key);
-            records.add(record);
+            String url = args.length > 0 ? args[0] : "";
+            if (StringUtils.isNotEmpty(url)) {
+                //load csv from URL to HDFS.
+                String fileLocation=PropertiesUtils.getPropertyValue(FILE_DOWNLOAD_LOCATION)+System.currentTimeMillis()+"-data.csv";
+                HttpUtil.downloadFile(fileLocation,url);
+                HDFSUtil.createHdfsDir(PropertiesUtils.getPropertyValue(HADOOP_FILE_COPY_PATH));
+                HDFSUtil.copyFileToHDFS(fileLocation,PropertiesUtils.getPropertyValue(HADOOP_FILE_COPY_PATH));
+                String hdfsFilePath=PropertiesUtils.getPropertyValue(HADOOP_FILE_COPY_PATH)+fileLocation.substring(fileLocation.lastIndexOf(File.separator)+1,fileLocation.length());
+                LOGGER.debug("File location in HDFS :: {} ",hdfsFilePath);
+                //dataset creation from HDFS path
+                Dataset<Row> data = spark.read().option("header", "true")
+                        .option("inferSchema", "true")
+                        .csv(hdfsFilePath);
+                //given data set column name has issues(like space added to High_Confidence_Limit), due to this only initial load works,next appends fail. to support appending
+                //data to hive table in next runs, i am converting raw inferred dataset to hive supported one, by trimming and converting columns to lower case.
+                Dataset<Row> hiveFormattedDataSet = data.toDF(Arrays.asList(data.columns()).stream().map(x -> x.toLowerCase().trim()).toArray(size -> new String[size]));
+                hiveFormattedDataSet.printSchema();
+                hiveFormattedDataSet.createOrReplaceTempView("temp");
+                //appending to table, if table not found create and append.
+               // if (!Arrays.stream(spark.sqlContext().tableNames()).anyMatch(tableName -> tableName.equalsIgnoreCase(PropertiesUtils.getPropertyValue(HIVE_APP_TABLE)))) {
+                    hiveFormattedDataSet.write().mode("append").format("hive").saveAsTable(PropertiesUtils.getPropertyValue(HIVE_APP_TABLE));
+                //}
+                // count of in hive table
+                String countQuery="SELECT COUNT(*) FROM "+PropertiesUtils.getPropertyValue(HIVE_APP_DATABASE)+"."+PropertiesUtils.getPropertyValue(HIVE_APP_TABLE);
+                spark.sql(countQuery).show();
+                List<String> queries=Arrays.asList(PropertiesUtils.getPropertyValue(QUERIES).split("\\^"));
+                for (String query:queries) {
+                    LOGGER.debug("Running :: {} "+query);
+                    Dataset result=spark.sql(query);
+                    result.show();
+                }
+            } else {
+                LOGGER.error("NO URL provided !, can't run batch!");
+            }
+            spark.stop();
+        } catch (Exception e) {
+            LOGGER.error("Error occurred while running job !!  errorMessage:: {}", e.getMessage(), e);
         }
-        Dataset<Row> recordsDF = spark.createDataFrame(records, Record.class);
-        recordsDF.createOrReplaceTempView("records");
-
-        // Queries can then join DataFrames data with data stored in Hive.
-        spark.sql("SELECT * FROM records r JOIN src s ON r.key = s.key").show();
-
-        spark.stop();
     }
 }

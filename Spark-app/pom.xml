@@ -20,6 +20,11 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.2.2</version>
                 <configuration>
+                    <artifactSet>
+                        <excludes>
+                            <exclude>*.properties</exclude>
+                        </excludes>
+                    </artifactSet>
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                             <mainClass>com.mdb.sample.BatchDataAnalyser</mainClass>

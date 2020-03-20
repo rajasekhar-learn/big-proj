@@ -4,7 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * load properties from class path and make them available.
@@ -39,6 +43,19 @@ public class PropertiesUtils {
 
     public static String getPropertyValue(String key){
        return INSTANCE.properties.getProperty(key);
+    }
+
+    /**
+     * getPropertyKeyAndValuesByPrefix method helps to retrieve all properties start with prefix,
+     * provide option to exclude prefix from keys. this helps to retrieve different set of same properties for different purposes.
+     * @param prefix
+     * @param excludePrefixInResultKey
+     * @return
+     */
+    public static Map<String,String> getPropertyKeyAndValuesByPrefix(String prefix,boolean excludePrefixInResultKey){
+        return  INSTANCE.properties.entrySet().stream().filter(entry-> String.valueOf(entry.getKey()).startsWith(prefix)).collect(Collectors.toMap(
+                entry -> excludePrefixInResultKey?String.valueOf(entry.getKey()).substring(prefix.length()+1):String.valueOf(entry.getKey()),
+                entry -> String.valueOf(entry.getValue())));
     }
 
 }

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+
+<configuration>
+  <property>
+	<name>hive.server2.enable.doAs</name>
+	<value>FALSE</value>
+	<description>
+		Setting this property to true will have HiveServer2 execute
+		Hive operations as the user making the calls to it.
+	</description>
+   </property> 
+    <property>
+        <name>hive.metastore.warehouse.dir</name>
+        <value>hdfs://localhost:9000/hive-warehouse</value>
+      </property>
+
+    <property>
+      <name>javax.jdo.option.ConnectionURL</name>
+      <value>jdbc:mysql://localhost:3306/hivedb?createDatabaseIfNotExist=true</value>
+    </property>
+	
+    <property>
+      <name>javax.jdo.option.ConnectionDriverName</name>
+      <value>com.mysql.cj.jdbc.Driver</value>
+    </property>
+    <property>
+      <name>javax.jdo.option.ConnectionUserName</name>
+      <value>root</value>
+    </property>
+    <property>
+      <name>javax.jdo.option.ConnectionPassword</name>
+      <value>hive</value>
+    </property>
+	
+	<property>
+	  <name>datanucleus.autoCreateSchema</name>
+	  <value>true</value>
+	</property>
+
+	<property>
+	  <name>datanucleus.fixedDatastore</name>
+	  <value>true</value>
+	</property>
+
+	<property>
+	 <name>datanucleus.autoCreateTables</name>
+	 <value>True</value>
+	</property>
+
+</configuration>

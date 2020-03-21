@@ -34,7 +34,7 @@ public class HDFSUtil {
     }
 
     /**
-     * creates hdfs location.
+     * creates hdfs location if not exist.
      * @param hdfsDir location to be created.
      * @throws IOException
      */

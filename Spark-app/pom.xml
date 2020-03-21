@@ -9,7 +9,7 @@
     <name>Spark app</name>
     <properties>
         <spark.version>2.4.5</spark.version>
-        <hive.jdbc.version>3.1.2</hive.jdbc.version>
+        <hive.jdbc.version>2.3.6</hive.jdbc.version>
         <hadoop.version>2.7.3</hadoop.version>
     </properties>
     <build>
@@ -17,6 +17,8 @@
         <resource>
             <directory>src/resources</directory>
             <excludes>
+                <!-- resources included for dev purpose in IDE, all dependencies excluding in pom
+                as in spark submit it was placed in class path -->
                 <exclude>*.*</exclude>
                 <exclude>application.properties</exclude>
                 <exclude>hive.xml</exclude>
@@ -159,7 +161,7 @@
             <url>https://repo.maven.apache.org/maven2</url>
             <layout>default</layout>
             <snapshots>
-                <enabled>true</enabled>
+                <enabled>false</enabled>
             </snapshots>
         </repository>
     </repositories>

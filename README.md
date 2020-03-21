@@ -1,5 +1,5 @@
 # flow diagram
-![Flow Diagram](relative/path/to/img.jpg?raw=true "FlowDiagram")
+![Flow Diagram](FlowDiagram.png "FlowDiagram")
 
 # 1.install hadoop :(i did at C:/apps)
 https://hadoop.apache.org/releases.html

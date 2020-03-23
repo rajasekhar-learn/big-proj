@@ -6,7 +6,10 @@ import com.mdb.sample.utils.HttpUtil;
 import com.mdb.sample.utils.PropertiesUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.spark.sql.*;
+import org.apache.spark.sql.Row;
+import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.Dataset;
+import org.apache.spark.sql.SaveMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

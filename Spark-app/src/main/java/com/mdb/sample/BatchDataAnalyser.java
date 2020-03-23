@@ -44,7 +44,6 @@ public class BatchDataAnalyser {
 
             SparkSession spark = SparkSession
                     .builder()
-                    .master("local[*]")
                     .appName("Spark app")
                     .config("spark.sql.warehouse.dir", warehouseLocation)
                     .enableHiveSupport()

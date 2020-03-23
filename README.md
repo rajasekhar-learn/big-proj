@@ -104,21 +104,33 @@ then to verify you can connect using beeline
 !connect jdbc:hive2://localhost:10000/default
 
 ### start the program ####
-## to run from intellij add hive and hadoop libs, core-site.xml,hdfs-site.xml,hive-site.xml and mysql-connector.jar in classpath.
-## and select add provide scope dependecies in class path.
+# Intellij
+to run from intellij, add SPARK_HOME/jars as library to module. and add core-site.xml,hdfs-site.xml,hive-site.xml and mysql-connector.jar in classpath.
+and select add provide scope dependecies in class path.
+# spark submit for windows:
+clone repository.
+cd spark-app
+mvn clean install
+then follow below steps.
+to run spark program we need spark , hadoop and hive dependencies should be available for both Driver and executor.
+spark submit command provides us way to copy and depencies to class path of container.
+
+if PATH not have spark and hadoop library , please add them.
+
+set PATH=%PATH%;C:\apps\spark-2.4.5\jars;
+C:\apps\spark-2.4.5\bin\spark-submit ^ \
+  --class com.mdb.sample.BatchDataAnalyser ^ \
+  --master local[*] ^ \
+  --files "C:\\apps\\hadoop\\etc\\hadoop\\hive-site.xml,C:\\apps\\hadoop\\etc\\hadoop\\core-site.xml,C:\\apps\\hadoop\\etc\\hadoop\\hdfs-site.xml,C:\\Users\\veera\\Desktop\\sparkapp\\configuration\\application.properties" ^ \
+  --driver-class-path "C:\\Users\\veera\\Desktop\\configuration\\mysql-connector-java-8.0.19.jar" ^ \
+  --jars "C:\\apps\\hadoop\\etc\\hadoop\\hive-site.xml,C:\\apps\\hadoop\\etc\\hadoop\\core-site.xml,C:\\apps\\hadoop\\etc\\hadoop\\hdfs-site.xml,C:\\Users\\veera\\Desktop\\sparkapp\\configuration\\application.properties,C:\\Users\\veera\\Desktop\\sparkapp\\configuration\\mysql-connector-java-8.0.19.jar" ^ \
+spark-app.jar https://chronicdata.cdc.gov/views/735e-byxc/rows.csv?accessType=DOWNLOAD
+
+for yarn mode , please add executors configuration to work. like --executor-memory ,--number of executors, --executor-cores etc.
 
 
 
-
-
-
-
-
-
-
-
-
-
+for linux replace "^" with "/" and replace path as per dependencies location.
 
 
 

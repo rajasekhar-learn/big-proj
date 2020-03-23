@@ -9,7 +9,7 @@
     <name>Spark app</name>
     <properties>
         <spark.version>2.4.5</spark.version>
-        <hive.jdbc.version>1.2.1</hive.jdbc.version>
+        <hive.jdbc.version>2.3.4</hive.jdbc.version>
         <hadoop.version>2.7.3</hadoop.version>
     </properties>
     <build>

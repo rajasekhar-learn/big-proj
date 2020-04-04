@@ -18,5 +18,4 @@ public class HttpUtil {
                 Integer.parseInt(PropertiesUtils.getPropertyValue(FILE_DOWNLOAD_TIMEOUT)));
     }
 
-
 }

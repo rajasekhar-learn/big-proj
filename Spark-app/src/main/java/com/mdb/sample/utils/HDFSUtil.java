@@ -2,7 +2,9 @@ package com.mdb.sample.utils;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hdfs.DistributedFileSystem;
 
 import java.io.IOException;
 
@@ -18,8 +20,8 @@ public class HDFSUtil {
         conf.addResource(new Path(PropertiesUtils.getPropertyValue(HADOOP_CORE_CONFIG_PATH)+"core-site.xml"));
         conf.addResource(new Path(PropertiesUtils.getPropertyValue(HADOOP_CORE_CONFIG_PATH)+"hdfs-site.xml"));
         conf.addResource(new Path(PropertiesUtils.getPropertyValue(HADOOP_CORE_CONFIG_PATH)+"hive-site.xml"));
-        conf.set("fs.hdfs.impl",org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
-        conf.set("fs.file.impl",org.apache.hadoop.fs.LocalFileSystem.class.getName());
+        conf.set("fs.hdfs.impl", DistributedFileSystem.class.getName());
+        conf.set("fs.file.impl", LocalFileSystem.class.getName());
     }
 
     /**
@@ -45,6 +47,5 @@ public class HDFSUtil {
             dfs.mkdirs(destinationDir);
         }
     }
-
 
 }

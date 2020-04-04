@@ -43,7 +43,7 @@
                     </artifactSet>
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>com.mdb.sample.BatchDataAnalyser</mainClass>
+                            <mainClass>com.mdb.sample.Analyser</mainClass>
                         </transformer>
                     </transformers>
                     <shadedArtifactAttached>true</shadedArtifactAttached>
@@ -138,6 +138,12 @@
           <groupId>mysql</groupId>
           <artifactId>mysql-connector-java</artifactId>
           <version>8.0.12</version>
+          <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.projectlombok</groupId>
+          <artifactId>lombok</artifactId>
+          <version>1.16.16</version>
       </dependency>
   </dependencies>
 

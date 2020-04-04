@@ -119,7 +119,7 @@ if PATH not have spark and hadoop library , please add them.
 
 set PATH=%PATH%;C:\apps\spark-2.4.5\jars;
 C:\apps\spark-2.4.5\bin\spark-submit ^ \
-  --class com.mdb.sample.BatchDataAnalyser ^ \
+  --class com.mdb.sample.Analyser ^ \
   --master local[*] ^ \
   --files "C:\\apps\\hadoop\\etc\\hadoop\\hive-site.xml,C:\\apps\\hadoop\\etc\\hadoop\\core-site.xml,C:\\apps\\hadoop\\etc\\hadoop\\hdfs-site.xml,C:\\Users\\veera\\Desktop\\sparkapp\\configuration\\application.properties" ^ \
   --driver-class-path "C:\\Users\\veera\\Desktop\\configuration\\mysql-connector-java-8.0.19.jar" ^ \

@@ -76,4 +76,13 @@ public class SparkUtils {
         getOrCreateSparkSession().sql(query).show();
     }
 
+    /**
+     * stops spark session
+     */
+    public static void stopSparkSession(){
+        if(sparkSession!=null) {
+             sparkSession.stop();
+        }
+    }
+
 }

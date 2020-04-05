@@ -26,8 +26,6 @@ public class Analyser {
      * @param args expects 2 parameters 1st parameter processId second URL argument(arg[1]), from where data can be fetched.
      */
     public static void main(String[] args) {
-        //eagerly creating spark session
-        SparkSession spark = SparkUtils.getOrCreateSparkSession();
         //determine the process type. i am checking from static param from args.
         // this can be dynamic dynamic parameter based on use case.
         String processId = args.length > 1 ? args[0] : "";
@@ -44,7 +42,7 @@ public class Analyser {
             log.error("Error occurred while running job !!  errorMessage:: {}", e.getMessage(), e);
         } finally {
             //stop spark session
-            spark.stop();
+            SparkUtils.stopSparkSession();
         }
     }
 

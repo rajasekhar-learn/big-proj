@@ -37,7 +37,7 @@ public class Analyser {
         try {
             if(processId.matches("\\d+")) {
                 ProcessUtil.invokeProcess(Integer.valueOf(processId), params);
-            }else {
+            } else {
                 log.error("Process id is invalid!! , please pass correct process id.");
             }
         } catch (Exception e) {

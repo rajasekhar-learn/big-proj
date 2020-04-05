@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -18,9 +19,8 @@ import static com.mdb.sample.constants.ModuleConstants.*;
 import static com.mdb.sample.utils.FileHandler.downloadAndPushFileToHDFS;
 
 @Slf4j
-public class SurveyProcessImpl implements BatchProcess {
+public class SurveyProcessImpl implements BatchProcess, Serializable {
 
-    private static final long serialVersionId=-1l;
 
     @SneakyThrows
     @Override
@@ -43,7 +43,7 @@ public class SurveyProcessImpl implements BatchProcess {
             StringBuilder countQuery=new StringBuilder();
             countQuery.append("SELECT COUNT(*) FROM ").append(PropertiesUtils.getPropertyValue(HIVE_APP_DATABASE))
                     .append(".").append(PropertiesUtils.getPropertyValue(HIVE_APP_TABLE));
-            SparkUtils.ranQuery(countQuery.toString());
+            SparkUtils.ranShowQuery(countQuery.toString());
 
             Map<String, String> queryAndTablesMap = PropertiesUtils.getPropertyKeyAndValuesByPrefix(QUERIES, true);
             List<String> queries = Arrays.asList(queryAndTablesMap.get("statements").split("\\^"));

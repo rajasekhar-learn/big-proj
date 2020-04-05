@@ -1,6 +1,7 @@
 package com.mdb.sample.utils;
 
 import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
@@ -10,18 +11,20 @@ import static com.mdb.sample.constants.ModuleConstants.FILE_DOWNLOAD_LOCATION;
 import static com.mdb.sample.constants.ModuleConstants.HADOOP_FILE_COPY_PATH;
 
 @Slf4j
+@UtilityClass
 public class FileHandler {
 
     /**
      * downloadAndPushFileToHDFS method will download file from url, and push that file to predefined hdfs
-     *  location.
+     * location.
+     *
      * @param url file url
      * @return hdfs file location
      */
     @SneakyThrows
     public static String downloadAndPushFileToHDFS(String url) {
         //load csv from URL to HDFS.
-        StringBuilder fileLocation=new StringBuilder();
+        StringBuilder fileLocation = new StringBuilder();
         fileLocation.append(PropertiesUtils.getPropertyValue(FILE_DOWNLOAD_LOCATION))
                 .append(System.currentTimeMillis()).append("-data.csv");
         HttpUtil.downloadFile(fileLocation.toString(), url);

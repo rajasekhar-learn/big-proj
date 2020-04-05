@@ -1,7 +1,6 @@
 package com.mdb.sample.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.Map;
@@ -11,9 +10,9 @@ import java.util.stream.Collectors;
 /**
  * load properties from class path and make them available.
  */
+@Slf4j
 public class PropertiesUtils {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PropertiesUtils.class);
     private final Properties properties;
 
     /**
@@ -37,7 +36,7 @@ public class PropertiesUtils {
         try {
             appProps.load(PropertiesUtils.class.getClassLoader().getResourceAsStream("application.properties"));
         } catch (IOException e) {
-            LOGGER.error("couldn't load application properties !! {}", e.getMessage(), e);
+            log.error("couldn't load application properties !! {}", e.getMessage(), e);
         }
         return appProps;
     }

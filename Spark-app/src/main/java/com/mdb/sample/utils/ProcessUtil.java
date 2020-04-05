@@ -1,11 +1,12 @@
 package com.mdb.sample.utils;
 
 import com.mdb.sample.process.impl.SurveyProcessImpl;
+import lombok.experimental.UtilityClass;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
-
+@UtilityClass
 public class ProcessUtil {
     // this process map holds process implementations.
     private static Map<Integer, Consumer> processMap = new HashMap<>();
@@ -20,7 +21,11 @@ public class ProcessUtil {
      * @param dependencies dependencies of the invoking process
      */
     public static void invokeProcess(Integer processId, Map<String, Object> dependencies) {
-        processMap.get(processId).accept(dependencies);
+        if(processMap.get(processId)!=null){
+            processMap.get(processId).accept(dependencies);
+        }else{
+            throw new IllegalArgumentException("invalid process id , no process found.");
+        }
     }
 
 }
